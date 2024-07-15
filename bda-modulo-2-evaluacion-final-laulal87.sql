@@ -216,16 +216,40 @@ WHERE c.name = 'Comedy' AND f.length >180 ;
 
 /* 25. BONUS: Encuentra todos los actores que han actuado juntos en al menos una película. La consulta debe mostrar el
  nombre y apellido de los actores y el número de películas en las que han actuado juntos.
-/*
+*/
+  
+-- Creamos una CTE (Common Table Expression) para obtener los nombres y apellidos de los actores
+WITH nombre_actores AS (
+    SELECT 
+        actor_id,      -- ID único de cada actor
+        first_name,    -- Nombre del actor
+        last_name      -- Apellido del actor
+    FROM actor         -- Tabla de actores
+)
 
+-- Seleccionamos los nombres y apellidos de los actores que han actuado juntos en películas
+SELECT 
+    a1.first_name AS actor1_nombre,       -- Nombre del primer actor
+    a1.last_name AS actor1_apellido,      -- Apellido del primer actor
+    a2.first_name AS actor2_nombre,       -- Nombre del segundo actor
+    a2.last_name AS actor2_apellido,      -- Apellido del segundo actor
+    COUNT(fa1.film_id) AS numero_peliculas -- Número de películas en las que ambos actores han actuado juntos
+    
+FROM 
+    film_actor AS fa1                    -- Tabla de relación entre películas y actores (primer actor)
+    INNER JOIN film_actor AS fa2         -- Segunda instancia de la misma tabla para el segundo actor
+        ON fa1.film_id = fa2.film_id     -- Nos aseguramos de que ambos actores han actuado en la misma película
+        AND fa1.actor_id < fa2.actor_id  -- Evitamos duplicar pares y ordenamos los actores por su ID
 
+    INNER JOIN nombre_actores AS a1      -- Unimos la CTE para obtener el nombre y apellido del primer actor
+        ON fa1.actor_id = a1.actor_id
 
+    INNER JOIN nombre_actores AS a2      -- Unimos la CTE para obtener el nombre y apellido del segundo actor
+        ON fa2.actor_id = a2.actor_id
 
-
-
-
-
-
-
-
-
+-- Agrupamos por los nombres y apellidos de ambos actores para contar las películas en las que han actuado juntos
+GROUP BY
+    a1.first_name, 
+    a1.last_name,
+    a2.first_name, 
+    a2.last_name;
