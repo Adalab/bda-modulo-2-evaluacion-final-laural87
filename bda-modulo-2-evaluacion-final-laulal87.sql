@@ -241,15 +241,17 @@ FROM
         ON fa1.film_id = fa2.film_id     -- Nos aseguramos de que ambos actores han actuado en la misma película
         AND fa1.actor_id < fa2.actor_id  -- Evitamos duplicar pares y ordenamos los actores por su ID
 
-    INNER JOIN nombre_actores AS a1      -- Unimos la CTE para obtener el nombre y apellido del primer actor
-        ON fa1.actor_id = a1.actor_id
+			INNER JOIN nombre_actores AS a1      -- Unimos la CTE para obtener el nombre y apellido del primer actor
+				ON fa1.actor_id = a1.actor_id
 
-    INNER JOIN nombre_actores AS a2      -- Unimos la CTE para obtener el nombre y apellido del segundo actor
-        ON fa2.actor_id = a2.actor_id
+			INNER JOIN nombre_actores AS a2      -- Unimos la CTE para obtener el nombre y apellido del segundo actor
+				ON fa2.actor_id = a2.actor_id
 
 -- Agrupamos por los nombres y apellidos de ambos actores para contar las películas en las que han actuado juntos
 GROUP BY
     a1.first_name, 
     a1.last_name,
     a2.first_name, 
-    a2.last_name;
+    a2.last_name
+    ;
+
